@@ -39,7 +39,7 @@
  cd /opt
  $WGET_CMD
  tar -xzf $INSTALL_FILE
- # /opt/splunkforwarder/bin/splunk enable boot-start -user splunkusername
+ # /opt/splunkforwarder/bin/splunk enable boot-start -user splunkusername --accept-license --answer-yes
  /opt/splunkforwarder/bin/splunk start --accept-license --answer-yes --auto-ports --no-prompt
  /opt/splunkforwarder/bin/splunk set deploy-poll \"$DEPLOY_SERVER\" --accept-license --answer-yes --auto-ports --no-prompt  -auth admin:changeme
  /opt/splunkforwarder/bin/splunk edit user admin -password $PASSWORD -auth admin:changeme
