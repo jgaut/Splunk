@@ -53,3 +53,6 @@ Pas de temps = $grabularite$
     max("data.devices.thermostats.wyB2GytM6dGf2KXOA3kyWj1YlBYpEigH.ambient_temperature_c") as "Température maison" 
     max('main.temp') as "Température Paris"
 ```
+
+### Inspecter un index
+``| dbinspect index=syslog``
