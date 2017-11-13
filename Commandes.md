@@ -32,3 +32,21 @@
 #### Reboot de tous les peers d'un cluster
 ``splunk rolling-restart cluster-peers`` [documentation](https://docs.splunk.com/Documentation/Splunk/latest/Indexer/Userollingrestart)
 
+#### Ajout d'un indexer à un search head [](https://docs.splunk.com/Documentation/Splunk/7.0.0/DistSearch/Configuredistributedsearch)
+``splunk add search-server <scheme>://<host>:<port> -auth <user>:<password> -remoteUsername <user> -remotePassword <passremote>``
+
+Note the following:
+
+ * <scheme> is the URI scheme: "http" or "https".
+ * <host> is the host name or IP address of the search peer's host machine.
+ * <port> is the management port of the search peer.
+ * Use the -auth flag to provide credentials for the search head.
+ * Use the -remoteUsername and -remotePassword flags for the credentials for the search peer. The remote credentials must be for an admin-level user on the search peer.
+
+``splunk add search-server https://192.168.1.1:8089 -auth admin:password -remoteUsername admin -remotePassword passremote``
+
+distsearch.conf in ``$SPLUNK_HOME/etc/system/local``
+```
+[distributedSearch]
+servers = https://192.168.1.1:8089,https://192.168.1.2:8089
+```
