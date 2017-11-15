@@ -50,3 +50,26 @@ distsearch.conf in ``$SPLUNK_HOME/etc/system/local``
 [distributedSearch]
 servers = https://192.168.1.1:8089,https://192.168.1.2:8089
 ```
+
+#### Indexer de nouveau des fichiers
+```
+$SPLUNK_HOME/bin/splunk stop
+rm -rf $SPLUNK_HOME/var/lib/splunk/fishbucket
+$SPLUNK_HOME/bin/splunk start
+```
+
+
+#### Indexer de nouveau des fichiers sur un UF 
+```
+$SPLUNK_HOME/bin/splunk stop
+$SPLUNK_HOME/bin/splunk clean all
+$SPLUNK_HOME/bin/splunk start
+```
+
+#### Indexer de nouveau des fichiers sur Indexer
+```
+$SPLUNK_HOME/bin/splunk stop
+$SPLUNK_HOME/bin/splunk clean eventdata -index my_index1
+$SPLUNK_HOME/bin/splunk clean eventdata -index my_index2
+$SPLUNK_HOME/bin/splunk start
+```
