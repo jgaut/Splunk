@@ -73,3 +73,8 @@ $SPLUNK_HOME/bin/splunk clean eventdata -index my_index1
 $SPLUNK_HOME/bin/splunk clean eventdata -index my_index2
 $SPLUNK_HOME/bin/splunk start
 ```
+
+#### Supprimer un KVSTORE
+```
+$SPLUNK_HOME/bin/splunk clean kvstore -app <app_name> -collection <collection_name>
+```
