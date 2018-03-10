@@ -55,4 +55,22 @@ Pas de temps = $grabularite$
 ```
 
 ### Inspecter un index
-``| dbinspect index=syslog``
+```javascript
+| dbinspect index=syslog
+```
+
+### Explorer les API REST
+```javascript
+| rest splunk_server=local /services/...
+```
+
+### Regarder le taux d'occupation des partitions des DD sur les serveurs Splunk
+```javascript
+`dmc_set_index_introspection` sourcetype=splunk_disk_objects component=Partitions
+| eval free = if(isnotnull('data.available'), 'data.available', 'data.free') 
+| eval usage = round(('data.capacity' - free) / 1024, 2) 
+| eval capacity = round('data.capacity' / 1024, 2)
+| eval pct_usage = round(usage / capacity * 100, 2)
+| chart avg(pct_usage) as usage  by host, "data.mount_point"
+```
+
