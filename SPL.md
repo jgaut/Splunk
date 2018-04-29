@@ -74,3 +74,9 @@ Pas de temps = $grabularite$
 | chart avg(pct_usage) as usage  by host, "data.mount_point"
 ```
 
+
+#### Utilisation Licence par index
+```javascript
+index=_internal source="*license_usage.log" type=usage idx="*" | eval MB = round(b/1048576,2) | eval st_idx = st.": ".idx | fields ** | timechart span=15minutes sum(MB) by st_idx | addtotals
+```
+
