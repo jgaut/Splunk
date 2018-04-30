@@ -1,0 +1,26 @@
+
+Script de déploiement de Splunk Universal Forwarder : Script_Installation_Splunk_UF.ps1
+
+Description : Ce script PowerShell permet l'installation et a configuration de l'agent Splunk Universal Forwarder sur un serveur de type Windows.
+
+Utilisation : Ce script doit être exécuté en ligne de commande PowerShell sur le serveur où l'installation et la configuration sont souhaitées.
+
+Paramètres d'entrée :
+
+L'ensemble des paramètres d'entrée ci-dessous sont obligatoires.
+
+	-binaire : Chemin vers le binaire de l'agent Splunk Universal Forwarder,
+	-checksum : Hash du fichier (MD5),
+	-server : Adresse IP du server Splunk ayant le rôle de déploiement serveur,
+	-port : Port du server Splunk ayant le rôle de déploiement serveur,
+	-password : Mot de passe de l'utilisateur "admin" de l'agent Splunk Universal Forwarder,
+	-server_name : Nom que le serveur doit avoir sous Splunk,
+	-secret* : Clef secrète de l'agent Splunk Universal Forwarder.
+
+*La clef secrète doit être similaire sur l'ensemble des instances Splunk. Elle est à garder avec une sécurité similaire à un mot de passe.
+
+Exemples d'utilisation :
+
+.\Script_Installation_Splunk_UF.ps1 -binaire "C:\Users\jgautier\Desktop\splunkforwarder-7.0.3-fa31da744b51-x64-release.msi" -checksum "7fcb446a404903b12c53ad3565d1f18c" -server 192.168.1.14 -port 9000 -password "newpassword" -server_name Serveur_central_Sentinel -secret "ma_clef_secrète"
+
+.\Script_Installation_Splunk_UF.ps1 -binaire "splunkforwarder-7.0.3-fa31da744b51-x64-release.msi" -checksum "7fcb446a404903b12c53ad3565d1f18c" -server 194.3.100.239 -port 9000 -password "SentinelDranci*2018!" -server_name SentinelDrancy -secret "ma_super_clef_secrète"
