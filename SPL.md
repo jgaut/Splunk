@@ -80,3 +80,11 @@ Pas de temps = $grabularite$
 index=_internal source="*license_usage.log" type=usage idx="*" | eval MB = round(b/1048576,2) | eval st_idx = st.": ".idx | fields ** | timechart span=15minutes sum(MB) by st_idx | addtotals
 ```
 
+```javascript
+earliest=@day-7days latest=@day index=* ( sourcetype!=btool* sourcetype!=splunk* sourcetype!=*too_small* sourcetype!=stash )
+| fields + sourcetype, _raw, host
+| eval size = len( _raw )
+| rex field=sourcetype "^(?<sourcetype>.+)-\d+"
+| stats count AS sample_set, perc95(size) AS perc95_size_bytes, dc(host) AS NumHosts BY sourcetype
+| eval perc95_size_bytes = round( perc95_size_bytes , 2 ) | eval daily_size_per_host_MB=round(((perc95_size_bytes*sample_set)/(NumHosts*7*1024*1024)), 2) | eval daily_size_MB = round((perc95_size_bytes*sample_set)/(7*1024*1024),2) | sort -daily_size_MB | addcoltotals daily_size_MB
+```
