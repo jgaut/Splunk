@@ -1,0 +1,21 @@
+Script de calcul de hash : Script_Calcul_Hash.ps1
+
+Description : Ce script PowerShell permet le calcul de hash sur un serveur de type Windows 7 ou 10.
+
+Utilisation : Ce script doit être exécuté en ligne de commande PowerShell sur le serveur où le calcul des hashs sont souhaitées.
+
+Paramètres d'entrée :
+
+L'ensemble des paramètres d'entrée ci-dessous sont obligatoires.
+
+	-path : Répertoire* ou fichier,
+	-algorithm : Algorithme souhaité : MD5, SHA1 ou SHA256,
+	-day : Nombre de jours d'ancienneté maximum des fichiers à rechercher.
+
+*La recherche se fait toujours de manière récursive.
+
+Exemples d'utilisation :
+
+.\Script_Calcul_Hash.ps1 -path 'C:\Program Files\Splunk\bin\scripts\*' -algorithm 'sha256' -day 365
+
+.\Script_Calcul_Hash.ps1 -path 'C:\Program Files\Projet_X\datas\*' -algorithm 'sha1' -day 1

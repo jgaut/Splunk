@@ -1,4 +1,3 @@
-
 Script de déploiement de Splunk Universal Forwarder : Script_Installation_Splunk_UF.ps1
 
 Description : Ce script PowerShell permet l'installation et a configuration de l'agent Splunk Universal Forwarder sur un serveur de type Windows.
