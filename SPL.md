@@ -74,12 +74,12 @@ Pas de temps = $grabularite$
 | chart avg(pct_usage) as usage  by host, "data.mount_point"
 ```
 
-
 #### Utilisation Licence par index
 ```javascript
 index=_internal source="*license_usage.log" type=usage idx="*" | eval MB = round(b/1048576,2) | eval st_idx = st.": ".idx | fields ** | timechart span=15minutes sum(MB) by st_idx | addtotals
 ```
 
+#### Utilisation Licence par sourcetype
 ```javascript
 earliest=@day-7days latest=@day index=* ( sourcetype!=btool* sourcetype!=splunk* sourcetype!=*too_small* sourcetype!=stash )
 | fields + sourcetype, _raw, host
@@ -88,3 +88,26 @@ earliest=@day-7days latest=@day index=* ( sourcetype!=btool* sourcetype!=splunk*
 | stats count AS sample_set, perc95(size) AS perc95_size_bytes, dc(host) AS NumHosts BY sourcetype
 | eval perc95_size_bytes = round( perc95_size_bytes , 2 ) | eval daily_size_per_host_MB=round(((perc95_size_bytes*sample_set)/(NumHosts*7*1024*1024)), 2) | eval daily_size_MB = round((perc95_size_bytes*sample_set)/(7*1024*1024),2) | sort -daily_size_MB | addcoltotals daily_size_MB
 ```
+
+#### Transfert de données d'un index event à un autre index event
+
+Commandes _collect_ pour les index de type _event_ et _mcollect_ pour les index de type _metric_.
+
+```javascript
+index="test" sourcetype="sentinel_data"
+| eval id=source." ".host." "._raw
+| search
+[search index="test" sourcetype="sentinel_data"
+| rex field=source "(?P<station>.*) (?P<numero_affaire>[\d\w]*) (?P<mytime>(?P<annee>\d{4})\.(?P<mois>\d{2})\.(?P<jour>\d{2})).*- (?P<collect_de_voies>.*)\.txt"
+| rex field=_raw "^(?P<seconde>\d+)[\s\t]*(?P<tension>[\d\.]*)"
+| search seconde >= 0
+| head 10
+| eval id=source." ".host." "._raw, _time=strptime(mytime, "%Y.%m.%d")+seconde, mycol=mvappend(mycol, "seconde=".seconde), mycol=mvappend(mycol, "tension=".tension)
+| mvexpand mycol
+| rex field=mycol "^(?P<metric_name>.*)=(?P<_value>.*)"
+| eval _raw="time="._time." "._raw
+| collect testmode=false index=test_collect addtime=false sourcetype="sentinel_data_metric"
+| return 20 id ]
+| delete
+```
+
