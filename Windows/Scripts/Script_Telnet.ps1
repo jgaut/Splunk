@@ -12,6 +12,7 @@ Param (
     If ($Socket)
     {   $Stream = $Socket.GetStream()
         $Writer = New-Object System.IO.StreamWriter($Stream)
+        $Writer->AutoFlush = true;
         $Buffer = New-Object System.Byte[] 1024 
         $Encoding = New-Object System.Text.Utf8Encoding
 
@@ -42,7 +43,8 @@ Param (
     {   $Result = "Unable to connect to host: $($RemoteHost):$Port"
     }
     #Done, now save the results to a file
-    $Result | Out-File -Encoding "UTF8" $OutputPath
+    #$Result | Out-File -Encoding "UTF8" $OutputPath
+    $Result
 
 #Edit the seconds below to fit your needs
 #Extreme Network Switch
