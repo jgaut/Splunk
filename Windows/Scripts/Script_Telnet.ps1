@@ -1,11 +1,11 @@
 #https://community.spiceworks.com/scripts/show/1887-get-telnet-telnet-to-a-device-and-issue-commands
 Param (
         [Parameter(ValueFromPipeline=$true)]
-        [String[]]$Commands = @("username","password","disable clipaging","sh config"),
+        [String[]]$Commands = @("username","password","AT*DATE?","AT*RSSI?"),
         [string]$RemoteHost = "HostnameOrIPAddress",
         [string]$Port = "2332",
         [int]$WaitTime = 1000,
-        [string]$OutputPath = "\\server\share\switchbackup.txt"
+        #[string]$OutputPath = "\\server\share\switchbackup.txt"
     )
     #Attach to the remote device, setup streaming requirements
     $Socket = New-Object System.Net.Sockets.TcpClient($RemoteHost, $Port)
@@ -19,6 +19,7 @@ Param (
         #Now start issuing the commands
         ForEach ($Command in $Commands)
         {   
+            #Add date to prefix each command
             if ($Command -match '.*AT.*') {
                 $Writer.WriteLine("AT*DATE?") 
                 $Writer.Flush()
@@ -46,6 +47,7 @@ Param (
     #$Result | Out-File -Encoding "UTF8" $OutputPath
     $Result
 
+#Examples
 #Edit the seconds below to fit your needs
 #Extreme Network Switch
 #Get-Telnet -RemoteHost "192.168.1.2" -Commands "username","password","disable clipaging","sh config" -OutputPath "\\server\share\hqswitches.txt"
@@ -56,7 +58,7 @@ Param (
 #Use a command file
 #Get-Telnet -Commands (Get-Content "c:\scripts\commands.txt") -RemoteHost "192.168.10.1" -OutputPath "\\server\share\ciscoswitch.txt" -WaitTime 1500
 
-#.\telnet.ps1 -RemoteHost sentinelbus.eairlink.com -Commands " ", "user", "password", "AT*NETIP?", "AT*NETSTATE?", "AT*NETRSSI?", "AT*CELLINFO?" -OutputPath "out.txt"
+#.\telnet.ps1 -RemoteHost sentinelbus.eairlink.com -Commands " ", "user", "password", "AT*NETIP?", "AT*NETSTATE?", "AT*NETRSSI?", "AT*CELLINFO?"
 
 #props.conf
 #[telnet]
