@@ -2,7 +2,13 @@ Script de déploiement de Splunk Universal Forwarder : Script_Installation_Splun
 
 Description : Ce script PowerShell permet l'installation et a configuration de l'agent Splunk Universal Forwarder sur un serveur de type Windows.
 
-Utilisation : Ce script doit être exécuté en ligne de commande PowerShell sur le serveur où l'installation et la configuration sont souhaitées.
+Utilisation : 
+	- Ce script doit être exécuté en ligne de commande PowerShell sur le serveur où l'installation et la configuration sont souhaitées,
+	- L'utilisateur doit posséder les droits suffisants pour l'installation de l'application et l'exécution de script.
+
+Aide : 
+	- Un powershell en mode administrateur peut être nécessaire,
+	- Pour les droits d'exécution des scripts : Commande "Set-ExecutionPolicy RemoteSigned" en mode administrateur (https://www.pcastuces.com/pratique/astuces/3908.htm).
 
 Paramètres d'entrée :
 

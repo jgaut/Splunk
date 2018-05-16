@@ -19,7 +19,7 @@ param(
 )
 
 #Vérification du hash du fichier binaire (SHA256)
-$checksum2 = $(CertUtil -hashfile .\splunkforwarder-7.0.3-fa31da744b51-x64-release.msi MD5)[1] -replace " ",""
+$checksum2 = $(CertUtil -hashfile $binaire MD5)[1] -replace " ",""
 
 if($checksum2 -ne $checksum){
 	Write-Host "Checksum invalide : L'integrite du fichier est compromise ou le parametre en entree est faux."
@@ -28,7 +28,7 @@ if($checksum2 -ne $checksum){
 	Write-Host "Integrite du binaire $binaire : OK"
 }
 
-#Arrêt du service SplunkForwarder (on ne sait jamais)
+#Arrêt du service SplunkForwarder (on ne sait jamais ou mise à jour)
 Write-Host "Arret du service SplunkForwarder"
 Net stop SplunkForwarder
 
