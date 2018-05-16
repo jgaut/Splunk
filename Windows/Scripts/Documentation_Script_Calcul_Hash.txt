@@ -9,8 +9,9 @@ Paramètres d'entrée :
 L'ensemble des paramètres d'entrée ci-dessous sont obligatoires.
 
 	-path : Répertoire* ou fichier,
-	-algorithm : Algorithme souhaité : MD5, SHA1 ou SHA256,
-	-day : Nombre de jours d'ancienneté maximum des fichiers à rechercher.
+	-algorithm : Algorithme souhaité : MD5, SHA1 ou SHA256 (SHA256 par défaut),
+	-day : Nombre de jours d'ancienneté maximum des fichiers à rechercher (0 par défaut),
+	-reptmp : Répertoire pour la dépose du fichier ("C:\" par defaut).
 
 *La recherche se fait toujours de manière récursive.
 
@@ -18,4 +19,19 @@ Exemples d'utilisation :
 
 .\Script_Calcul_Hash.ps1 -path 'C:\Program Files\Splunk\bin\scripts\*' -algorithm 'sha256' -day 365
 
-.\Script_Calcul_Hash.ps1 -path 'C:\Program Files\Projet_X\datas\*' -algorithm 'sha1' -day 1
+.\Script_Calcul_Hash.ps1 -path 'C:\Program Files\Projet_X\datas\*' -algorithm 'sha1' -day 1 -reptmp "D:\"
+
+Exemples d'utilisation dans le cadre de Splunk :
+
+[powershell://hash]
+script = powershell.exe -File "C:\Program Files\SplunkUniversalForwarder\etc\apps\_SNCF_TA_Sentinel\bin\hash.ps1" -path 'C:\Users\SENTINEL\Desktop\*\Planches\*' -algorithm 'sha256' -day 2
+schedule = * */4 * * *
+index=sentinel_hash_files
+sourcetype=_json
+
+[batch://C:\hash*.json]
+index=sentinel_hash_files
+sourcetype=_json
+move_policy = sinkhole
+
+On utilise un fichier intermédiaire car dans certaines anciennes versions de PowerShell, les lignes sont tronquées dans la sortie standart...
