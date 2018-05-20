@@ -15,6 +15,7 @@ defaultGroup = splunk
 ```javascript
 [tcpout:splunk]
 server = slmaq020.cus.fr:9997
+maxQueueSize = 100MB
 ```
 
 #### inputs.conf
@@ -23,4 +24,5 @@ server = slmaq020.cus.fr:9997
 host_segment = 5
 sourcetype = 
 index = 
+persistentQueueSize = 100MB
 ```
