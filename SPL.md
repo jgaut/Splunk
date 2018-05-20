@@ -76,7 +76,7 @@ Pas de temps = $grabularite$
 
 #### Utilisation Licence par index
 ```javascript
-index=_internal source="*license_usage.log" type=usage idx="*" | eval MB = round(b/1048576,2) | eval st_idx = st.": ".idx | fields ** | timechart span=15minutes sum(MB) by st_idx | addtotals
+index=_internal source="*license_usage.log" type=usage idx="*" | eval MB = round(b/1048576,2) | eval st_idx = st.": ".idx | fields ** | timechart span=1d sum(MB) by st_idx | addtotals
 ```
 
 #### Utilisation Licence par sourcetype
