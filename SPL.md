@@ -111,3 +111,18 @@ index="test" sourcetype="sentinel_data"
 | delete
 ```
 
+#### Interrogation d'une base de données via SPL
+```javascript
+| dbxquery query="SELECT * FROM DBO.FACTURES
+inner join DBO.CLIENTS
+on FCC_CLI_ID =  DBO.CLIENTS.CLI_ID
+inner join  DBO.COMMANDES 
+ON DBO.CLIENTS.CLI_ID = DBO.COMMANDES.CMD_CLI_ID
+where FCC_CLI_ID=48 " 
+
+connection="ADISTA-NOVA"
+
+| eval nb=if(CMD_ABOTYPE = 0 , if(NOT match(CMD_TITRE, ".*BIMESTRIEL.*"), 1,2), if(CMD_ABOTYPE = 1, 3, if(CMD_ABOTYPE = 2, 6,12))), nb=if(CMD_ABOTYPE=1, 1, nb),
+montant = FCC_MNTHT / nb, _time=strptime(FCC_DATE_CREATION, "%Y-%m-%d")
+| timechart sum(montant)  by CMD_ABOTYPE
+```
