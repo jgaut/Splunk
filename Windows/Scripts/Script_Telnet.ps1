@@ -48,16 +48,6 @@ Param (
     $Result
 
 #Examples
-#Edit the seconds below to fit your needs
-#Extreme Network Switch
-#Get-Telnet -RemoteHost "192.168.1.2" -Commands "username","password","disable clipaging","sh config" -OutputPath "\\server\share\hqswitches.txt"
-#Dell Switch
-#Get-Telnet -RemoteHost "10.10.10.2" -Commands "admin","password","terminal datadump","show run" -OutputPath "\\server\share\DellHQswitches.txt" -WaitTime 2000
-#Cisco ASA
-#Get-Telnet -RemoteHost "192.168.10.1" -Commands "admin","password","terminal pager 0","show run" -OutputPath "\\server\share\CiscoFirewall.txt"
-#Use a command file
-#Get-Telnet -Commands (Get-Content "c:\scripts\commands.txt") -RemoteHost "192.168.10.1" -OutputPath "\\server\share\ciscoswitch.txt" -WaitTime 1500
-
 #.\telnet.ps1 -RemoteHost sentinelbus.eairlink.com -Commands " ", "user", "password", "AT*NETIP?", "AT*NETSTATE?", "AT*NETRSSI?", "AT*CELLINFO?"
 
 #props.conf
