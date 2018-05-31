@@ -58,3 +58,6 @@ $argumentList = ' -RemoteHost $modemIP -port $modemPort -Commands " ", "user", "
 #Write-Host $argumentList
 
 Invoke-Expression "& `"$scriptTelnet`" $argumentList $Args"
+
+# Exemples
+# .\Script_Macro_Telnet.ps1 -Fichier1 'C:\Program Files (x86)\Sentinel\Connexion.ini' -Fichier2 'C:\Program Files (x86)\Sentinel\mdpco.conf' -key "mon_mot_de_passe" -scriptTelnet .\Script_Telnet.ps1
