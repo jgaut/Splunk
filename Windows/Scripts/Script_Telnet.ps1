@@ -4,15 +4,15 @@ Param (
         [String[]]$Commands = @("username","password","AT*DATE?","AT*RSSI?"),
         [string]$RemoteHost = "HostnameOrIPAddress",
         [string]$Port = "2332",
-        [int]$WaitTime = 1000,
-        #[string]$OutputPath = "\\server\share\switchbackup.txt"
+        [int]$WaitTime = 1000
     )
+
     #Attach to the remote device, setup streaming requirements
     $Socket = New-Object System.Net.Sockets.TcpClient($RemoteHost, $Port)
     If ($Socket)
     {   $Stream = $Socket.GetStream()
         $Writer = New-Object System.IO.StreamWriter($Stream)
-        $Writer->AutoFlush = true;
+        #$Writer->AutoFlush = true
         $Buffer = New-Object System.Byte[] 1024 
         $Encoding = New-Object System.Text.Utf8Encoding
 
