@@ -3,7 +3,8 @@ Param (
         [string]$Fichier1 = "Connexion.ini",
         [string]$Fichier2 = "mdpco.conf",
         [string]$key = "clef de chiffrement",
-        [string]$scriptTelnet = "..."
+        [string]$scriptTelnet = "...",
+        [string]$Args = "'AT*NETIP?', 'AT*NETSTATE?', 'AT*NETRSSI?', 'AT*CELLINFO?'"
     )
 
 
@@ -20,7 +21,7 @@ foreach ($UneLigne in $MonFichier){
     }
 }
 
-#Write-Host $modemIP
+#Write-Host $Args
 #Write-Host $modemPort
 
 $MonFichier = get-content $Fichier2
@@ -52,6 +53,8 @@ $modemPass = [System.Text.Encoding]::UNICODE.GetString($data3)
 $modemPass = $modemPass+"UsEr"
 #Write-Host $modemIp $modemPort $modemPass $scriptTelnet
 
-$argumentList = ' -RemoteHost $modemIP -port $modemPort -Commands " ", "user", "$modemPass", "AT*NETIP?", "AT*NETSTATE?", "AT*NETRSSI?", "AT*CELLINFO?"'
+$argumentList = ' -RemoteHost $modemIP -port $modemPort -Commands " ", "user", "$modemPass", '
 
-Invoke-Expression "& `"$scriptTelnet`" $argumentList"
+#Write-Host $argumentList
+
+Invoke-Expression "& `"$scriptTelnet`" $argumentList $Args"
