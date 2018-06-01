@@ -126,3 +126,10 @@ connection="ADISTA-NOVA"
 montant = FCC_MNTHT / nb, _time=strptime(FCC_DATE_CREATION, "%Y-%m-%d")
 | timechart sum(montant)  by CMD_ABOTYPE
 ```
+
+#### Multisearch avec _tstats_ et/ou _mstats_
+```javascript
+|  mstats prestats=true avg(cpu.percent.idle.value)  WHERE index="collectd" AND source="http:collectd" span=10m
+|  mstats prestats=true append=true avg(cpu.percent.nice.value) WHERE index="collectd" AND source="http:collectd" span=10m
+|  timechart span=10m avg(cpu.percent.idle.value) avg(cpu.percent.nice.value)
+```
