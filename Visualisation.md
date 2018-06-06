@@ -36,3 +36,15 @@
       </table>
     </panel>
 ```
+
+#### Utilisation de la commande _rangemap_
+```javascript
+ low = green
+ guarded = blue
+ elevated = yellow
+ high = orange
+ severe =red
+
+ | rangemap field=nb low=0-0 high=1-100000 default=high
+
+```
