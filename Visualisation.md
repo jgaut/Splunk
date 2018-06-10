@@ -43,7 +43,7 @@
  guarded = blue
  elevated = yellow
  high = orange
- severe =red
+ severe = red
 
  | rangemap field=nb low=0-0 high=1-100000 default=high
 

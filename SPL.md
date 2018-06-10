@@ -133,3 +133,53 @@ montant = FCC_MNTHT / nb, _time=strptime(FCC_DATE_CREATION, "%Y-%m-%d")
 |  mstats prestats=true append=true avg(cpu.percent.nice.value) WHERE index="collectd" AND source="http:collectd" span=10m
 |  timechart span=10m avg(cpu.percent.idle.value) avg(cpu.percent.nice.value)
 ```
+
+#### Voir les différences pour les alarmes avec _Set diff_
+```javascript
+| set diff 
+    [| makeresults 1 
+    | eval tmp="a" 
+    | makemv delim="," tmp 
+    | mvexpand tmp 
+    | table tmp 
+    | append 
+        [| makeresults 1 
+        | eval tmp="a,b,c,d" 
+        | makemv delim="," tmp 
+        | mvexpand tmp 
+        | table tmp] ] 
+    [| makeresults 1 
+    | eval tmp="a,b,c,d" 
+    | makemv delim="," tmp 
+    | mvexpand tmp 
+    | table tmp] 
+| join type=left tmp 
+    [| makeresults 1 
+    | eval tmp="a,b,c,d"
+    | makemv delim="," tmp 
+    | mvexpand tmp 
+    | table tmp
+    | eval tmp2=1]
+| table tmp*
+| eval tmp2=if(isnull(tmp2),0,tmp2)
+```
+Avec un _search tmp2=1_ pour détecter lorsqu'il y a une nouvelle alerte.
+
+Avec la recherche des éléments récents
+```javascript
+| makeresults 1 
+    | eval tmp="a" 
+    | makemv delim="," tmp 
+    | mvexpand tmp 
+    | table tmp
+```
+
+Et la recherche des éléments de la précédente recherche
+```javascript
+| makeresults 1 
+    | eval tmp="a,b,c,d"
+    | makemv delim="," tmp 
+    | mvexpand tmp 
+    | table tmp
+```
+
