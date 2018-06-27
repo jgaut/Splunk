@@ -183,3 +183,7 @@ Et la recherche des éléments de la précédente recherche
     | table tmp
 ```
 
+#### Sauvegarde et modification d'un KV Store
+```javascript
+ | inputlookup csvcoll_lookup | search _key=544948df3ec32d7a4c1d9755 | eval CustName="Marge Simpson" | eval CustCity="Springfield" | outputlookup csvcoll_lookup append=True
+```

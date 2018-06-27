@@ -17,7 +17,6 @@ defaultGroup = splunk
 server = slmaq020.cus.fr:9997
 maxQueueSize = 100MB
 ```
-
 #### inputs.conf
 ```javascript
 [monitor:///var/log/syslogd/firewall/*/*.log]
@@ -25,4 +24,26 @@ host_segment = 5
 sourcetype = 
 index = 
 persistentQueueSize = 100MB
+```
+#### server.conf
+```javascript
+[indexer_discovery]
+pass4SymmKey = my_secret
+indexerWeightByDiskCapacity = true
+```
+
+#### outputs.conf
+```javascript
+[indexer_discovery:master1]
+pass4SymmKey = my_secret
+master_uri = https://10.152.31.202:8089
+
+[tcpout:group1]
+autoLBFrequency = 30
+forceTimebasedAutoLB = true
+indexerDiscovery = master1
+useACK=true
+
+[tcpout]
+defaultGroup = group1
 ```
