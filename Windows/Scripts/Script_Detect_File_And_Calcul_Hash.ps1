@@ -9,13 +9,19 @@
 # Original script => https://gallery.technet.microsoft.com/scriptcenter/Powershell-FileSystemWatche-dfd7084b
 
 param(
-	[string] $path = $(throw "A path is required. Usage: .\Script_Detect_File_And_Calcul_Hash.ps1 -path 'my_path' -algorithm 'sha256' -day 2 "),
+	[string] $path = $(throw "A path is required. Usage: .\Script_Detect_File_And_Calcul_Hash.ps1 -path 'my_path' -algorithm 'sha256'"),
 	[string] $algorithm = 'SHA256',
-	[string] $reptmp = "C:\"
+	[string] $reptmp = "C:\",
+	[string] $logfile = "hash.json",
+	[string] $filesize = "1000000",
+	[int] $logcount = 5
 )
 
 $global:algorithm = $algorithm
 $global:reptmp = $reptmp
+$global:logfile = $reptmp+$logfile
+$global:logcount = $logcount
+$global:filesize = $filesize
 
 # To stop the monitoring, run the following commands:
 Unregister-Event FileChanged 
@@ -32,21 +38,19 @@ $fsw = New-Object IO.FileSystemWatcher $path, $filter -Property @{IncludeSubdire
  
 Register-ObjectEvent $fsw Created -SourceIdentifier FileCreated -Action {
     
+    . "$PSScriptRoot\Script_LogRotate.ps1"
+	Reset-Log -fileName $logfile -filesize $filesize -logcount $logcount
+
     $name = $Event.SourceEventArgs.Name
 	$FullName = '"' + $Event.SourceEventArgs.FullPath + '"'
 	$changeType = $Event.SourceEventArgs.ChangeType
 	$timeStamp = $Event.TimeGenerated
 
 	$powershellversion = $PSVersionTable.PSVersion.Major
-	 
-	$rand = Get-Random
-	$rand_file = $reptmp+"hash_files_"+$algorithm+"_"+$rand+".json" 
-	$tmp_file = $reptmp+"tmp.json"
 	
-
 	if($powershellversion -ge 4){
 		
-		Get-ChildItem $FullName -File | Select LastWriteTime,Name,FullName,@{N='FileHash';E={(Get-FileHash $_.PSPath -algorithm $algorithm).Hash}},@{N='Algorithm';E={echo $algorithm}} | ConvertTo-JSON -Compress | Out-File -FilePath $tmp_file -Append
+		Get-ChildItem $FullName -File | Select LastWriteTime,Name,FullName,@{N='FileHash';E={(Get-FileHash $_.PSPath -algorithm $algorithm).Hash}},@{N='Algorithm';E={echo $algorithm}} | ConvertTo-JSON -Compress | Out-File -FilePath $logfile -Append
 
 	}else{
 		Write-Host $Event.SourceEventArgs 
@@ -57,31 +61,28 @@ Register-ObjectEvent $fsw Created -SourceIdentifier FileCreated -Action {
 		$FullName = $FullName.ToString().Replace('"','\"').Replace('\','\\').Replace("`n",'').Replace("`r",'').Replace("`t",'')
 		#Write-Host $FullName
 		$file = gci $FullName
-		'{"LastWriteTime":"'+$file.LastWriteTime+'","Name":"'+$Name+'","FullName":"'+$FullName+'","FileHash":"'+[System.BitConverter]::ToString( $hash.ComputeHash([System.IO.File]::ReadAllBytes($FullName))).replace('-',"")+'","Algorithm":"'+$algorithm+'"}' | Out-File -Append -FilePath $tmp_file
+		'{"LastWriteTime":"'+$file.LastWriteTime+'","Name":"'+$Name+'","FullName":"'+$FullName+'","FileHash":"'+[System.BitConverter]::ToString( $hash.ComputeHash([System.IO.File]::ReadAllBytes($FullName))).replace('-',"")+'","Algorithm":"'+$algorithm+'"}' | Out-File -Append -FilePath $logfile
 	
 	} 
 
-	Rename-Item -Path $tmp_file -NewName $rand_file
 }
  
 
 Register-ObjectEvent $fsw Changed -SourceIdentifier FileChanged -Action {
     
+    . "$PSScriptRoot\Script_LogRotate.ps1"
+	Reset-Log -fileName $logfile -filesize $filesize -logcount $logcount
+
     $name = $Event.SourceEventArgs.Name
 	$FullName = $Event.SourceEventArgs.FullPath  
 	$changeType = $Event.SourceEventArgs.ChangeType
 	$timeStamp = $Event.TimeGenerated
 
 	$powershellversion = $PSVersionTable.PSVersion.Major
-	 
-	$rand = Get-Random
-	$rand_file = $reptmp+"hash_files_"+$algorithm+"_"+$rand+".json" 
-	$tmp_file = $reptmp+"tmp.json"
-	
 
 	if($powershellversion -ge 4){
 		
-		Get-ChildItem $FullName -File | Select LastWriteTime,Name,FullName,@{N='FileHash';E={(Get-FileHash $_.PSPath -algorithm $algorithm).Hash}},@{N='Algorithm';E={echo $algorithm}} | ConvertTo-JSON -Compress | Out-File -FilePath $tmp_file -Append
+		Get-ChildItem $FullName -File | Select LastWriteTime,Name,FullName,@{N='FileHash';E={(Get-FileHash $_.PSPath -algorithm $algorithm).Hash}},@{N='Algorithm';E={echo $algorithm}} | ConvertTo-JSON -Compress | Out-File -FilePath $logfile -Append
 
 	}else{
 		Write-Host $Event.SourceEventArgs 
@@ -92,11 +93,10 @@ Register-ObjectEvent $fsw Changed -SourceIdentifier FileChanged -Action {
 		$FullName = $FullName.ToString().Replace('"','\"').Replace('\','\\').Replace("`n",'').Replace("`r",'').Replace("`t",'')
 		#Write-Host $FullName
 		$file = gci $FullName
-		'{"LastWriteTime":"'+$file.LastWriteTime+'","Name":"'+$Name+'","FullName":"'+$FullName+'","FileHash":"'+[System.BitConverter]::ToString( $hash.ComputeHash([System.IO.File]::ReadAllBytes($FullName))).replace('-',"")+'","Algorithm":"'+$algorithm+'"}' | Out-File -Append -FilePath $tmp_file
+		'{"LastWriteTime":"'+$file.LastWriteTime+'","Name":"'+$Name+'","FullName":"'+$FullName+'","FileHash":"'+[System.BitConverter]::ToString( $hash.ComputeHash([System.IO.File]::ReadAllBytes($FullName))).replace('-',"")+'","Algorithm":"'+$algorithm+'"}' | Out-File -Append -FilePath $logfile
 	
 	} 
 
-	Rename-Item -Path $tmp_file -NewName $rand_file
 }
 
 while(1){
