@@ -55,15 +55,15 @@ Register-ObjectEvent $fsw Changed -SourceIdentifier FileChanged -Action {
 
 	$m = $name | Select-String -Pattern '(\d\d\d\d)\.(\d\d)\.(\d\d)\s(\d\d)h\.(\d\d)m\.(\d\d)s'
 	
-	$time = Get-Date -Format o -Year $m.Matches[0].Groups[1].Value -Month $m.Matches[0].Groups[2].Value -Day $m.Matches[0].Groups[3].Value -Hour $m.Matches[0].Groups[4].Value -Minute $m.Matches[0].Groups[5].Value -Second $m.Matches[0].Groups[6].Value
-
-	Write-Host $time
+	#$time = Get-Date -Format s -Year $m.Matches[0].Groups[1].Value -Month $m.Matches[0].Groups[2].Value -Day $m.Matches[0].Groups[3].Value -Hour $m.Matches[0].Groups[4].Value -Minute $m.Matches[0].Groups[5].Value -Second $m.Matches[0].Groups[6].Value
+	$time = $m.Matches[0].Groups[1].Value +"/"+ $m.Matches[0].Groups[2].Value +"/"+ $m.Matches[0].Groups[3].Value +" "+ $m.Matches[0].Groups[4].Value +":"+ $m.Matches[0].Groups[5].Value +":"+ $m.Matches[0].Groups[6].Value
+	
 
 	$powershellversion = $PSVersionTable.PSVersion.Major
 
 	if($powershellversion -ge 4){
 		
-		Get-ChildItem $FullName -File | Select Name,FullName,@{N='FileHash';E={(Get-FileHash $_.PSPath -algorithm $algorithm).Hash}},@{N='Algorithm';E={echo $algorithm}},@{N='_time';E={echo $time}} | ConvertTo-JSON -Compress | Out-File -FilePath $logfile -Append
+		Get-ChildItem $FullName -File | Select Name,FullName,@{N='FileHash';E={(Get-FileHash $_.PSPath -algorithm $algorithm).Hash}},@{N='Algorithm';E={echo $algorithm}},@{N='time';E={echo $time}} | ConvertTo-JSON -Compress | Out-File -FilePath $logfile -Append
 
 	}else{
 
@@ -74,7 +74,7 @@ Register-ObjectEvent $fsw Changed -SourceIdentifier FileChanged -Action {
 		$FullName = $FullName.ToString().Replace('"','\"').Replace('\','\\').Replace("`n",'').Replace("`r",'').Replace("`t",'')
 		#Write-Host $FullName
 		$file = gci $FullName
-		'{"_time":"'+$time+'","Name":"'+$Name+'","FullName":"'+$FullName+'","FileHash":"'+[System.BitConverter]::ToString( $hash.ComputeHash([System.IO.File]::ReadAllBytes($FullName))).replace('-',"")+'","Algorithm":"'+$algorithm+'"}' | Out-File -Append -FilePath $logfile
+		'{"time":"'+$time+'","Name":"'+$Name+'","FullName":"'+$FullName+'","FileHash":"'+[System.BitConverter]::ToString( $hash.ComputeHash([System.IO.File]::ReadAllBytes($FullName))).replace('-',"")+'","Algorithm":"'+$algorithm+'"}' | Out-File -Append -FilePath $logfile
 	
 	} 
 
