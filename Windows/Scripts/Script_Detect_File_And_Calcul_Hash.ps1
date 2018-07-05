@@ -19,11 +19,12 @@ param(
 
 $global:algorithm = $algorithm
 $global:reptmp = $reptmp
-$global:logfile = $reptmp+$logfile
+$global:logfile = $reptmp+"\"+$logfile
 $global:logcount = $logcount
 $global:filesize = $filesize
 
-$hashPIDFile = $reptmp+"hash.pid"
+
+$hashPIDFile = $reptmp+"\hash.pid"
 
 #Stop old process
 $oldPID = get-content $hashPIDFile
