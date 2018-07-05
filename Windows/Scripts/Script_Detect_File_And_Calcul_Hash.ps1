@@ -13,8 +13,8 @@ param(
 	[string] $algorithm = 'SHA256',
 	[string] $reptmp = "C:\",
 	[string] $logfile = "hash.json",
-	[string] $filesize = "1000000",
-	[int] $logcount = 5
+	[string] $filesize = "10000000",
+	[int] $logcount = 1
 )
 
 $global:algorithm = $algorithm
@@ -23,9 +23,17 @@ $global:logfile = $reptmp+$logfile
 $global:logcount = $logcount
 $global:filesize = $filesize
 
+$hashPIDFile = $reptmp+"hash.pid"
+
+#Stop old process
+$oldPID = get-content $hashPIDFile
+Stop-Process -Id $oldPID
+
+#Replace PID file
+$PID | Out-File -FilePath $hashPIDFile
+
 # To stop the monitoring, run the following commands:
 Unregister-Event FileChanged 
-Unregister-Event FileCreated 
  
 #$path = 'C:\Users\jgautier\Desktop\' # Enter the root path you want to monitor. 
 $filter = '*.*'  # You can enter a wildcard filter here.  
@@ -35,41 +43,8 @@ $fsw = New-Object IO.FileSystemWatcher $path, $filter -Property @{IncludeSubdire
 
 
 # Here, all three events are registerd.  You need only subscribe to events that you need: 
- 
-Register-ObjectEvent $fsw Created -SourceIdentifier FileCreated -Action {
-    
-    . "$PSScriptRoot\Script_LogRotate.ps1"
-	Reset-Log -fileName $logfile -filesize $filesize -logcount $logcount
-
-    $name = $Event.SourceEventArgs.Name
-	$FullName = '"' + $Event.SourceEventArgs.FullPath + '"'
-	$changeType = $Event.SourceEventArgs.ChangeType
-	$timeStamp = $Event.TimeGenerated
-
-	$powershellversion = $PSVersionTable.PSVersion.Major
-	
-	if($powershellversion -ge 4){
-		
-		Get-ChildItem $FullName -File | Select LastWriteTime,Name,FullName,@{N='FileHash';E={(Get-FileHash $_.PSPath -algorithm $algorithm).Hash}},@{N='Algorithm';E={echo $algorithm}} | ConvertTo-JSON -Compress | Out-File -FilePath $logfile -Append
-
-	}else{
-		Write-Host $Event.SourceEventArgs 
-		$hash = [System.Security.Cryptography.HashAlgorithm]::create($algorithm)
-		#Write-Host $hash
-		$Name = $name.ToString().Replace('"','\"').Replace('\','\\').Replace("`n",'').Replace("`r",'').Replace("`t",'')
-		#Write-Host $Name
-		$FullName = $FullName.ToString().Replace('"','\"').Replace('\','\\').Replace("`n",'').Replace("`r",'').Replace("`t",'')
-		#Write-Host $FullName
-		$file = gci $FullName
-		'{"LastWriteTime":"'+$file.LastWriteTime+'","Name":"'+$Name+'","FullName":"'+$FullName+'","FileHash":"'+[System.BitConverter]::ToString( $hash.ComputeHash([System.IO.File]::ReadAllBytes($FullName))).replace('-',"")+'","Algorithm":"'+$algorithm+'"}' | Out-File -Append -FilePath $logfile
-	
-	} 
-
-}
- 
-
 Register-ObjectEvent $fsw Changed -SourceIdentifier FileChanged -Action {
-    
+
     . "$PSScriptRoot\Script_LogRotate.ps1"
 	Reset-Log -fileName $logfile -filesize $filesize -logcount $logcount
 
@@ -78,14 +53,20 @@ Register-ObjectEvent $fsw Changed -SourceIdentifier FileChanged -Action {
 	$changeType = $Event.SourceEventArgs.ChangeType
 	$timeStamp = $Event.TimeGenerated
 
+	$m = $name | Select-String -Pattern '(\d\d\d\d)\.(\d\d)\.(\d\d)\s(\d\d)h\.(\d\d)m\.(\d\d)s'
+	
+	$time = Get-Date -Format o -Year $m.Matches[0].Groups[1].Value -Month $m.Matches[0].Groups[2].Value -Day $m.Matches[0].Groups[3].Value -Hour $m.Matches[0].Groups[4].Value -Minute $m.Matches[0].Groups[5].Value -Second $m.Matches[0].Groups[6].Value
+
+	Write-Host $time
+
 	$powershellversion = $PSVersionTable.PSVersion.Major
 
 	if($powershellversion -ge 4){
 		
-		Get-ChildItem $FullName -File | Select LastWriteTime,Name,FullName,@{N='FileHash';E={(Get-FileHash $_.PSPath -algorithm $algorithm).Hash}},@{N='Algorithm';E={echo $algorithm}} | ConvertTo-JSON -Compress | Out-File -FilePath $logfile -Append
+		Get-ChildItem $FullName -File | Select Name,FullName,@{N='FileHash';E={(Get-FileHash $_.PSPath -algorithm $algorithm).Hash}},@{N='Algorithm';E={echo $algorithm}},@{N='_time';E={echo $time}} | ConvertTo-JSON -Compress | Out-File -FilePath $logfile -Append
 
 	}else{
-		Write-Host $Event.SourceEventArgs 
+
 		$hash = [System.Security.Cryptography.HashAlgorithm]::create($algorithm)
 		#Write-Host $hash
 		$Name = $name.ToString().Replace('"','\"').Replace('\','\\').Replace("`n",'').Replace("`r",'').Replace("`t",'')
@@ -93,7 +74,7 @@ Register-ObjectEvent $fsw Changed -SourceIdentifier FileChanged -Action {
 		$FullName = $FullName.ToString().Replace('"','\"').Replace('\','\\').Replace("`n",'').Replace("`r",'').Replace("`t",'')
 		#Write-Host $FullName
 		$file = gci $FullName
-		'{"LastWriteTime":"'+$file.LastWriteTime+'","Name":"'+$Name+'","FullName":"'+$FullName+'","FileHash":"'+[System.BitConverter]::ToString( $hash.ComputeHash([System.IO.File]::ReadAllBytes($FullName))).replace('-',"")+'","Algorithm":"'+$algorithm+'"}' | Out-File -Append -FilePath $logfile
+		'{"_time":"'+$time+'","Name":"'+$Name+'","FullName":"'+$FullName+'","FileHash":"'+[System.BitConverter]::ToString( $hash.ComputeHash([System.IO.File]::ReadAllBytes($FullName))).replace('-',"")+'","Algorithm":"'+$algorithm+'"}' | Out-File -Append -FilePath $logfile
 	
 	} 
 
@@ -102,3 +83,8 @@ Register-ObjectEvent $fsw Changed -SourceIdentifier FileChanged -Action {
 while(1){
 	sleep 1
 }
+
+# Exemples :
+
+# Pour une stanza PowerShell
+# Start-Job -Name MyhashJob -ScriptBlock {powershell.exe -File 'E:\splunk\etc\apps\_SNCF_TA_Server_Sentinel\bin\Script_Detect_File_And_Calcul_Hash.ps1' -path 'E:\FTP\Sentinel\' -algorithm 'SHA256' -repTmp 'E:\Splunk\etc\apps\_SNCF_TA_Server_Sentinel\tmp\'}
