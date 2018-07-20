@@ -47,3 +47,14 @@ useACK=true
 [tcpout]
 defaultGroup = group1
 ```
+
+#### wmi.conf
+```javascript
+[WMI:TailApplicationLogs]
+interval = 10
+event_log_file = Application, Security, System
+server = srv1, srv2, srv3
+disabled = 0
+current_only = 1
+batch_size = 10
+```
