@@ -17,16 +17,17 @@ if($powershellversion -ge 4){
 		$file
 	}
 }else{
-	$rand = Get-Random
-	$rand_file = $reptmp+"hash_files_"+$algorithm+"_"+$rand+".json"
-	$tmp_file = $reptmp+"tmp.json"
 	foreach ($file in $files) {
 		if($file){
 			$hash = [System.Security.Cryptography.HashAlgorithm]::create($algorithm)
 			$Name = $file.Name.ToString().Replace('"','\"').Replace('\','\\').Replace("`n",'').Replace("`r",'').Replace("`t",'')
 			$FullName = $file.FullName.ToString().Replace('"','\"').Replace('\','\\').Replace("`n",'').Replace("`r",'').Replace("`t",'')
-			'{"LastWriteTime":"'+$file.LastWriteTime+'","Name":"'+$Name+'","FullName":"'+$FullName+'","FileHash":"'+[System.BitConverter]::ToString( $hash.ComputeHash([System.IO.File]::ReadAllBytes($file.FullName))).replace('-',"")+'","Algorithm":"'+$algorithm+'"}' | Out-File -Append -FilePath $tmp_file
+			$FullName = gci $FullName
+			$tmp = '{"time":"'+$time+'","Name":"'+$Name+'","FullName":"'+$FullName+'","FileHash":"'+[System.BitConverter]::ToString( $hash.ComputeHash([System.IO.File]::ReadAllBytes($FullName))).replace('-',"")+'","Algorithm":"'+$algorithm+'"}' 
+			$rand = Get-Random
+			$rand_file = $reptmp+"\"+$rand+"_hash.json"
+			$tmp_file = $reptmp+"tmp.json"
+			$tmp | Out-File -Append -FilePath $logfile
 		}
 	}
-	Rename-Item -Path $tmp_file -NewName $rand_file
 }
