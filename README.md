@@ -48,7 +48,7 @@ _Acquisition des données_
 
 La solution Splunk couvre 90% des cas d'usage.
 
-_Concurrence :_
+**Concurrence :**
 * [Tableau](https://www.tableau.com) est une solution web spécialisée dans la visualisation,
     * "+" Grand nombre de choix de présentation,
     * "-"  
