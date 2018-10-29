@@ -49,6 +49,13 @@ _Acquisition des données_
 La solution Splunk couvre 90% des cas d'usage.
 
 _Concurrence :_
-* [Tableau](https://www.tableau.com) pour une solution de type web,
-* [Grapher](http://www.goldensoftware.com/products/grapher) pour une solution avec un client lourd,
-* [Kibana](https://www.elastic.co/fr/products/kibana) pour une solution de type web open source.
+* [Tableau](https://www.tableau.com) est une solution web spécialisée dans la visualisation,
+    * "+" Grand nombre de choix de présentation,
+    * "-"  
+* [Grapher](http://www.goldensoftware.com/products/grapher) est une solution avec un client lourd,
+    * "+" Grand nombre de choix de présentation, 
+    * "+" Finesse des graphiques (>10 000 points),
+    * "-"
+* [Kibana](https://www.elastic.co/fr/products/kibana) pour une solution de type web open source,
+    * "+" Open source,
+    * "-" Open source,
