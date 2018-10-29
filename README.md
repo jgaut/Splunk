@@ -1,6 +1,8 @@
 # Splunk
 Ceci est un dépôt de trucs utiles pour Splunk.
 
+## Vision verticale de l'architecture
+
                       Export des données               -----|
                               /\                            |
                               ||                            | 
@@ -10,7 +12,7 @@ Ceci est un dépôt de trucs utiles pour Splunk.
                               ||
                               ||                          
                  Mise à disposition des données        -----|
-                              /\                            |
+                              /\                            | Partie différenciante :  
                               ||                            |
                               ||                            |
             Reconnaissance/Transformation des données       |
