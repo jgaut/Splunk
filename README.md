@@ -1,20 +1,24 @@
 # Splunk
-Ceci est un dépôt de trucs utiles pour Splunk.
 
 ## Vision verticale de l'architecture
 
-                      Export des données               -----|
-                              /\                            |
+_Visualisation et export des données_
+
+                      Export des données               -----| 
+                              /\                            | 
                               ||                            | 
-                              ||                            |
-                   Visualisation des données           -----|
+                              ||                            |               
+                   Visualisation des données           -----|               
                               /\
                               ||
-                              ||                          
+                              || 
+                              
+_Gestion des données_   
+
                  Mise à disposition des données        -----|
-                              /\                            | Partie différenciante :  
-                              ||                            |
-                              ||                            |
+                              /\                            |
+                              ||                            | 
+                              ||                            | 
             Reconnaissance/Transformation des données       |
                               /\                            |
                               ||                            |
@@ -31,9 +35,20 @@ Ceci est un dépôt de trucs utiles pour Splunk.
                               /\
                               ||
                               ||
+
+_Acquisition des données_
+
                      Transfert des données             -----|
                               /\                            |
                               ||                            |
                               ||                            |
                  Génération/captation des données      -----|
                
+### Visualisation et export des données
+
+La solution Splunk couvre 90% des cas d'usage.
+
+_Concurrence :_
+* [Tableau](https://www.tableau.com) pour une solution de type web,
+* [Grapher](http://www.goldensoftware.com/products/grapher) pour une solution avec un client lourd,
+* [Kibana](https://www.elastic.co/fr/products/kibana) pour une solution de type web open source.
