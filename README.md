@@ -1,6 +1,6 @@
 # Splunk
 
-## Vision verticale de l'architecture
+## Vision verticale de le plateforme
 
 _Visualisation et export des données_
 
