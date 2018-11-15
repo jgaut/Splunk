@@ -187,3 +187,11 @@ Et la recherche des éléments de la précédente recherche
 ```javascript
  | inputlookup csvcoll_lookup | search _key=544948df3ec32d7a4c1d9755 | eval CustName="Marge Simpson" | eval CustCity="Springfield" | outputlookup csvcoll_lookup append=True
 ```
+
+#### Inspecter les jobs pour trouver les plus consommateurs
+```javascript
+| rest /services/search/jobs
+| search savedSearchLabel=*
+| stats max(runDuration) as duration by label
+| sort - duration
+```
