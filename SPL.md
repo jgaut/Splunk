@@ -195,3 +195,12 @@ Et la recherche des éléments de la précédente recherche
 | stats max(runDuration) as duration by label
 | sort - duration
 ```
+
+#### Licence usage to index metrics
+```javascript
+index=_internal source="*license_usage.log" type=usage idx="*"  st="*" h="*" | eval MB = round(b/1048576,2)
+| bin span=1d _time
+| stats sum(MB) as MB by _time h st idx type
+| rename MB as _value h as host type as metric_name
+| mcollect index=test_metrics h st idx
+````
