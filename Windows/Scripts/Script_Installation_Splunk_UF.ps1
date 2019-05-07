@@ -1,4 +1,5 @@
 #Script d'installation automatique de l'universal forwarder Splunk
+#https://docs.splunk.com/Documentation/Forwarder/7.2.6/Forwarder/InstallaWindowsuniversalforwarderfromthecommandline
 
 #Récupération des paramètres d'entrée : Tous sont obligatoires
 param(
@@ -37,7 +38,7 @@ $config = $server + ":" + $port
 #Write-Host $config
 #Write-Host $binaire 
 Write-Host "Installation du binaire : $binaire"
-Start-Process msiexec.exe -Wait -ArgumentList "/i $binaire AGREETOLICENSE=Yes LAUNCHSPLUNK=0 /l*v install_splunkforwarder.msi.log /quiet"
+Start-Process msiexec.exe -Wait -ArgumentList "/i $binaire AGREETOLICENSE=Yes LAUNCHSPLUNK=0 SPLUNKUSERNAME=admin SPLUNKPASSWORD=$PASSWORD /l*v install_splunkforwarder.msi.log /quiet"
 
 #Changement du nom de l'host 
 Write-Host "Changement du nom du serveur : $server_name"
@@ -53,8 +54,8 @@ Write-Host "Deploiement serveur : $config"
 & 'C:\Program Files\SplunkUniversalForwarder\bin\splunk' set deploy-poll $config
 
 #Changement de mote de passe pour le user admin de l'application UF Splunk
-Write-Host "Changement du mote de passe"
-& 'C:\Program Files\SplunkUniversalForwarder\bin\splunk' edit user admin -password $PASSWORD -auth admin:changeme
+#Write-Host "Changement du mote de passe"
+#& 'C:\Program Files\SplunkUniversalForwarder\bin\splunk' edit user admin -password  -auth admin:changeme
 
 #Mise en place du fichier splunk.secret
 Write-Host "Mise en place du secret"
